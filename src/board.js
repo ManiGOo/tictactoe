@@ -1,13 +1,14 @@
-let board = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+// board.js
+export function renderBoard(board, boardEl, handleClick) {
+    boardEl.innerHTML = "";
 
-function printBoard() {
-    console.log(`
-     ${board[0]} | ${board[1]} | ${board[2]} 
-    ---+---+---
-     ${board[3]} | ${board[4]} | ${board[5]} 
-    ---+---+---
-     ${board[6]} | ${board[7]} | ${board[8]} 
-    `);
+    board.forEach((cell, index) => {
+        const cellEl = document.createElement("div");
+        cellEl.classList.add("cell");
+        cellEl.textContent = cell;
+        cellEl.dataset.index = index;
+
+        cellEl.addEventListener("click", handleClick);
+        boardEl.appendChild(cellEl);
+    });
 }
-
-export { board, printBoard }

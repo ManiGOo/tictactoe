@@ -1,28 +1,16 @@
-import { printBoard } from "./board";
-import { makeMove, switchPlayer, checkWinner, currentPlayer } from "./playerTurn";
+// game.js
+export const winCombos = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
 
-function startGame() {
-    let turns = 0;
-    while (turns < 9) {
-        printBoard();
-        let move = prompt(`${currentPlayer}'s turn (0-8):`);
-        move = parseInt(move);
-
-        if (move >= 0 && move <= 8 && makeMove(move)) {
-            let winner = checkWinner();
-            if (winner) {
-                printBoard();
-                console.log(`${winner} wins! 🎉`);
-                return;
-            }
-            switchPlayer();
-            turns++;
-        } else {
-            console.log("Invalid move. Try again.");
-        }
-    }
-    printBoard();
-    console.log("It's a draw! 🫱🫲");
+export function checkWinner(board) {
+    return winCombos.some(([a, b, c]) =>
+        board[a] && board[a] === board[b] && board[a] === board[c]
+    );
 }
 
-export { startGame }
+export function isDraw(board) {
+    return board.every(cell => cell !== "");
+}
