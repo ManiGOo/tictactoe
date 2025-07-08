@@ -1,0 +1,84 @@
+import { Player } from "./Player.js"
+import { Gameboard } from "./gameboard.js"
+
+const GameController = (() => {
+  let player1;
+  let player2 = undefined;
+  let currentPlayer;
+  let gameOver = false;
+
+  const winningCombos = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const startGame = (name1 = "Player 1", name2 = "Player 2") => {
+    player1 = Player(name1, "X");
+    player2 = Player(name2, "0");
+
+    currentPlayer = player1;
+    gameOver = false;
+    Gameboard.reset();
+  };
+
+  const getCurrentPlayer = () => currentPlayer;
+
+  const checkWinner = () => {
+    const board = Gameboard.getBoard();
+    for (const combo of winningCombos) {
+      if (combo.every(index => board[index] === currentPlayer.getMark())) {
+        return combo;
+      }
+    }
+    return null;
+  };
+
+  const switchPlayer = () => {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+  };
+
+
+  const playTurn = (index) => {
+    if (gameOver || !Gameboard.placeMark(index, currentPlayer.getMark())) return;
+
+    const winnerCombo = checkWinner();
+    if (winnerCombo) {
+      gameOver = true;
+      return { message: `${currentPlayer.getName()} wins!`, combo: winnerCombo };
+    }
+
+    if (Gameboard.isFull()) {
+      gameOver = true;
+      return { message: "It's a draw!" };
+    }
+
+    switchPlayer();
+    return null;
+  };
+
+  const isGameOver = () => gameOver;
+
+  const restart = () => {
+    Gameboard.reset();
+    currentPlayer = player1;
+    gameOver = false;
+  };
+
+  return {
+    startGame,
+    playTurn,
+    getCurrentPlayer,
+    isGameOver,
+    restart,
+  }
+
+})();
+
+
+export { GameController }
