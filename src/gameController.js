@@ -1,11 +1,13 @@
-import { Player } from "./Player.js"
-import { Gameboard } from "./gameboard.js"
+// gameController.js
+import { Player } from "./Player.js";
+import { Gameboard } from "./gameboard.js";
 
 const GameController = (() => {
   let player1;
-  let player2 = undefined;
+  let player2;
   let currentPlayer;
   let gameOver = false;
+  let scores = { player1: 0, player2: 0, draws: 0 };
 
   const winningCombos = [
     [0, 1, 2],
@@ -21,13 +23,14 @@ const GameController = (() => {
   const startGame = (name1 = "Player 1", name2 = "Player 2") => {
     player1 = Player(name1, "X");
     player2 = Player(name2, "0");
-
     currentPlayer = player1;
     gameOver = false;
     Gameboard.reset();
   };
 
   const getCurrentPlayer = () => currentPlayer;
+  const getScores = () => scores;
+  const getPlayers = () => ({ player1, player2 });
 
   const checkWinner = () => {
     const board = Gameboard.getBoard();
@@ -43,18 +46,23 @@ const GameController = (() => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   };
 
-
   const playTurn = (index) => {
     if (gameOver || !Gameboard.placeMark(index, currentPlayer.getMark())) return;
 
     const winnerCombo = checkWinner();
     if (winnerCombo) {
       gameOver = true;
+      if (currentPlayer === player1) {
+        scores.player1 += 1;
+      } else {
+        scores.player2 += 1;
+      }
       return { message: `${currentPlayer.getName()} wins!`, combo: winnerCombo };
     }
 
     if (Gameboard.isFull()) {
       gameOver = true;
+      scores.draws += 1;
       return { message: "It's a draw!" };
     }
 
@@ -76,9 +84,9 @@ const GameController = (() => {
     getCurrentPlayer,
     isGameOver,
     restart,
-  }
-
+    getScores,
+    getPlayers,
+  };
 })();
 
-
-export { GameController }
+export { GameController };
